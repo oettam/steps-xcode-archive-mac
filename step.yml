@@ -1,0 +1,121 @@
+title: Xcode Archive
+summary: |-
+  Create an archive so you can share it, upload it, deploy it and catch them
+  all! Well, maybe not the last one.
+description: ""
+website: https://github.com/vasarhelyia/steps-new-xcode-archive-mac
+source_code_url: https://github.com/vasarhelyia/steps-new-xcode-archive-mac
+support_url: https://github.com/vasarhelyia/steps-new-xcode-archive-mac/issues
+host_os_tags:
+  - "osx-10.10"
+project_type_tags:
+  - mac
+type_tags:
+  - build
+  - xcode
+is_requires_admin_user: false
+is_always_run: false
+is_skippable: false
+deps:
+  check_only:
+  - name: xcode
+run_if: ""
+inputs:
+  - workdir: $BITRISE_SOURCE_DIR
+    opts:
+      title: "Working directory"
+      summary: ""
+      description: |
+        Working directory of the step.
+        You can leave it empty to don't change it.
+      is_required: false
+      is_expand: true
+      is_dont_change_value: false
+  - project_path: $BITRISE_PROJECT_PATH
+    opts:
+      title: "Project (or Workspace) path"
+      summary: ""
+      description: |
+        A `.xcodeproj` or `.xcworkspace` path.
+      is_required: true
+      is_expand: true
+      is_dont_change_value: false
+  - scheme: $BITRISE_SCHEME
+    opts:
+      title: "Scheme name"
+      summary: ""
+      description: |
+        The Scheme to use.
+      is_required: true
+      is_expand: true
+      is_dont_change_value: false
+  - configuration:
+    opts:
+      title: "Configuration name"
+      summary: ""
+      description: |
+        (optional) The configuration to use. By default your Scheme
+        defines which configuration (Debug, Release, ...) should be used,
+        but you can overwrite it with this option.
+        **Make sure that the Configuration you specify actually exists
+        in your Xcode Project**. If it does not, if you have a typo
+        in the value of this input Xcode will simply use the Configuration
+        specified by the Scheme and will silently ignore this parameter!
+      is_required: false
+      is_expand: true
+      is_dont_change_value: false
+  - output_dir: $BITRISE_DEPLOY_DIR
+    opts:
+      title: "Output directory path"
+      summary: ""
+      description: |
+        This directory will contain the generated Xcode archive (.xcarchive)
+        and the .app file.
+      is_required: false
+      is_expand: true
+      is_dont_change_value: false
+  - is_force_code_sign: "no"
+    opts:
+      title: "Use force code signing attributes?"
+      description: |-
+        If set to "yes" then it'll use the `PROVISIONING_PROFILE` (set
+        to the value of the `$BITRISE_PROVISIONING_PROFILE_ID` environment)
+        and `CODE_SIGN_IDENTITY` (set to the value
+        of the `$BITRISE_CODE_SIGN_IDENTITY` environment)
+        Xcode Command Line parameters,
+        for force the use of specified Certificate and Provisioning Profile,
+        to the ones
+      value_options:
+        - "yes"
+        - "no"
+      is_required: true
+      is_expand: false
+      is_dont_change_value: false
+  - is_clean_build: "yes"
+    opts:
+      title: "Do a clean Xcode build before the archive?"
+      value_options:
+        - "yes"
+        - "no"
+      is_required: true
+      is_expand: true
+      is_dont_change_value: false
+  - output_tool: xcpretty
+    opts:
+      title: Output tool
+      description: |-
+        If output_tool is set to xcpretty, the xcodebuild output will be prettified by xcpretty.
+        If output_tool is set to xcodebuild, the raw xcodebuild output will be printed.
+      value_options:
+      - xcpretty
+      - xcodebuild
+      is_required: true
+      is_expand: false
+      is_dont_change_value: false
+outputs:
+  - BITRISE_APP_PATH:
+    opts:
+      title: The created .app file's path
+  - BITRISE_DSYM_PATH:
+    opts:
+      title: The created .dSYM.zip file's path
