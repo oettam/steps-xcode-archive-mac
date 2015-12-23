@@ -2,7 +2,7 @@
 
 THIS_SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-set -e
+set -ex
 
 #
 # Detect Xcode major version
@@ -58,7 +58,7 @@ if [[ "${output_tool}" == "xcpretty" ]] ; then
 	fi
 fi
 
-set -e
+set -ex
 
 #
 # Project-or-Workspace flag
@@ -180,41 +180,41 @@ export_command="xcodebuild -exportArchive"
 if [[ "${xcode_major_version}" == "6" ]] ; then
 	#
 	# Get the name of the profile which was used for creating the archive
-	# --> Search for embedded.mobileprovision in the xcarchive.
+	# --> Search for embedded.provisionprofile in the xcarchive.
 	#     It should contain a .app folder in the xcarchive folder
 	#     under the Products/Applications folder
-	embedded_mobile_prov_path=""
+	embedded_prov_path=""
 
 	# We need -maxdepth 2 because of the `*.app` directory
 	IFS=$'\n'
-	for a_emb_path in $(find "${archive_path}/Products/Applications" -type f -maxdepth 2 -ipath '*.app/embedded.mobileprovision')
+	for a_emb_path in $(find "${archive_path}/Applications" -type f -maxdepth 2 -ipath '*.app/embedded.provisionprofile')
 	do
-		echo " * embedded.mobileprovision: ${a_emb_path}"
-		if [ ! -z "${embedded_mobile_prov_path}" ] ; then
-			finalcleanup "More than one \`embedded.mobileprovision\` found in \`${archive_path}/Products/Applications/*.app\`"
+		echo " * embedded.provisionprofile: ${a_emb_path}"
+		if [ ! -z "${embedded_prov_path}" ] ; then
+			finalcleanup "More than one \`embedded.provisionprofile\` found in \`${archive_path}/Products/Applications/*.app\`"
 			exit 1
 		fi
-		embedded_mobile_prov_path="${a_emb_path}"
+		embedded_prov_path="${a_emb_path}"
 	done
 	unset IFS
 
-	if [ -z "${embedded_mobile_prov_path}" ] ; then
-		finalcleanup "No \`embedded.mobileprovision\` found in \`${archive_path}/Products/Applications/*.app\`"
+	if [ -z "${embedded_prov_path}" ] ; then
+		finalcleanup "No \`embedded.provisionprofile\` found in \`${archive_path}/Products/Applications/*.app\`"
 		exit 1
 	fi
 
 	#
-	# We have the mobileprovision file - let's get the Profile name from it
-	profile_name=`/usr/libexec/PlistBuddy -c 'Print :Name' /dev/stdin <<< $(security cms -D -i "${embedded_mobile_prov_path}")`
+	# We have the privisionprofile file - let's get the Profile name from it
+	profile_name=`/usr/libexec/PlistBuddy -c 'Print :Name' /dev/stdin <<< $(security cms -D -i "${embedded_prov_path}")`
 	if [ $? -ne 0 ] ; then
-		finalcleanup "Missing embedded mobileprovision in xcarchive"
+		finalcleanup "Missing embedded provisionprofile in xcarchive"
 	fi
 
 	echo " (i) Found Profile Name for signing: ${profile_name}"
 
 	#
 	# Use the Provisioning Profile name to export the APP
-	export_command="$export_command -exportFormat app"
+	export_command="$export_command -exportFormat APP"
 	export_command="$export_command -archivePath \"${archive_path}\""
 	export_command="$export_command -exportPath \"${app_path}\""
 	export_command="$export_command -exportProvisioningProfile \"${profile_name}\""
@@ -230,12 +230,12 @@ if [[ "${xcode_major_version}" == "6" ]] ; then
 
 	eval $export_command
 else
-
 	tmp_dir=$(mktemp -d -t bitrise-xcarchive)
 
+	export_command="$export_command -exportFormat APP"
 	export_command="$export_command -archivePath \"${archive_path}\""
-	export_command="$export_command -exportPath \"${tmp_dir}\""
-	export_command="$export_command -exportOptionsPlist \"${export_options_path}\""
+	export_command="$export_command -exportPath \"${tmp_dir}/${scheme}\""
+	# export_command="$export_command -exportOptionsPlist \"${export_options_path}\""
 
 	if [[ "${output_tool}" == "xcpretty" ]] ; then
 		export_command="set -o pipefail && $export_command | xcpretty"
@@ -245,13 +245,12 @@ else
 	echo "export command:"
 	echo "$export_command"
 	echo
-
 	eval $export_command
 
 	# Searching for app
 	exported_app_path=""
 	IFS=$'\n'
-	for a_file_path in $(find "${tmp_dir}" -maxdepth 1 -mindepth 1)
+	for a_file_path in $(find "$tmp_dir" -maxdepth 1 -mindepth 1 -type d)
 	do
 		filename=$(basename "$a_file_path")
 		echo " -> moving file: ${a_file_path} to ${output_dir}"
@@ -259,7 +258,7 @@ else
 		mv "${a_file_path}" "${output_dir}"
 
 		regex=".*.app"
-		if [[ "${filename}" =~ $regex ]]; then
+		if [[ "${filename}" =~ $regex ]] ; then
 			if [[ -z "${exported_app_path}" ]] ; then
 				exported_app_path="${output_dir}/${filename}"
 			else
@@ -282,13 +281,11 @@ else
 	app_path="${exported_app_path}"
 fi
 
-
 #
 # Export *.app path
 echo " (i) The APP is now available at: ${app_path}"
 envman add --key BITRISE_APP_PATH --value "${app_path}"
 echo ' (i) The APP path is now available in the Environment Variable: $BITRISE_APP_PATH'
-
 
 #
 # dSYM handling
@@ -330,7 +327,7 @@ if [[ ! -z "${DSYM_PATH}" && -d "${DSYM_PATH}" ]] ; then
   dsym_parent_folder=$( dirname "${DSYM_PATH}" )
   dsym_fold_name=$( basename "${DSYM_PATH}" )
   # cd into dSYM parent to not to store full
-  #  paths in the ZIP
+  # paths in the ZIP
   cd "${dsym_parent_folder}"
   /usr/bin/zip -rTy \
     "${dsym_zip_path}" \
