@@ -2,7 +2,7 @@
 
 THIS_SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-set -ex
+set -e
 
 #
 # Detect Xcode major version
@@ -58,7 +58,7 @@ if [[ "${output_tool}" == "xcpretty" ]] ; then
 	fi
 fi
 
-set -ex
+set -e
 
 #
 # Project-or-Workspace flag
