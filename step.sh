@@ -203,7 +203,7 @@ if [[ "${xcode_major_version}" == "6" ]] ; then
 	fi
 
 	#
-	# We have the privisionprofile file - let's get the Profile name from it
+	# We have the provisionprofile file - let's get the Profile name from it
 	profile_name=`/usr/libexec/PlistBuddy -c 'Print :Name' /dev/stdin <<< $(security cms -D -i "${embedded_prov_path}")`
 	if [ $? -ne 0 ] ; then
 		finalcleanup "Missing embedded provisionprofile in xcarchive"
@@ -229,12 +229,38 @@ if [[ "${xcode_major_version}" == "6" ]] ; then
 
 	eval $export_command
 else
+	echo " (i) Using Xcode 7 'exportOptionsPlist' option"
+
+	if [ -z "${export_options_path}" ] ; then
+		export_options_path="${output_dir}/export_options.plist"
+		curr_pwd="$(pwd)"
+		cd "${THIS_SCRIPT_DIR}"
+		bundle install
+		bundle exec ruby "./generate_export_options.rb" \
+			-o "${export_options_path}" \
+			-a "${archive_path}"
+		cd "${curr_pwd}"
+	fi
+
+	#
+	# Because of an RVM issue which conflicts with `xcodebuild`'s new
+	#  `-exportOptionsPlist` option
+	# link: https://github.com/bitrise-io/steps-xcode-archive/issues/13
+	command_exists () {
+		command -v "$1" >/dev/null 2>&1 ;
+	}
+	if command_exists rvm ; then
+		set +x
+		echo "=> Applying RVM 'fix'"
+		[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm"
+		rvm use system
+	fi
+
 	tmp_dir=$(mktemp -d -t bitrise-xcarchive)
 
-	export_command="$export_command -exportFormat APP"
 	export_command="$export_command -archivePath \"${archive_path}\""
 	export_command="$export_command -exportPath \"${tmp_dir}/${scheme}\""
-	# export_command="$export_command -exportOptionsPlist \"${export_options_path}\""
+	export_command="$export_command -exportOptionsPlist \"${export_options_path}\""
 
 	if [[ "${output_tool}" == "xcpretty" ]] ; then
 		export_command="set -o pipefail && $export_command | xcpretty"
