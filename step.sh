@@ -185,9 +185,8 @@ if [[ "${xcode_major_version}" == "6" ]] ; then
 	#     under the Products/Applications folder
 	embedded_prov_path=""
 
-	# We need -maxdepth 2 because of the `*.app` directory
 	IFS=$'\n'
-	for a_emb_path in $(find "${archive_path}/Applications" -type f -maxdepth 2 -ipath '*.app/embedded.provisionprofile')
+	for a_emb_path in $(find "${archive_path}/Products/Applications" -type f -maxdepth 3 -ipath "*/embedded.provisionprofile")
 	do
 		echo " * embedded.provisionprofile: ${a_emb_path}"
 		if [ ! -z "${embedded_prov_path}" ] ; then
