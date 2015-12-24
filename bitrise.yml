@@ -28,7 +28,7 @@ workflows:
         - is_create_path: true
     - path::./:
         inputs:
-        - is_force_code_sign: "yes"
+        - is_force_code_sign: "no"
         - is_clean_build: "no"
         - workdir: $PROJECT_WORKDIR
         - output_tool: xcpretty
