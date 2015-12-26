@@ -13,7 +13,7 @@ end
 
 def collect_provision_info(archive_path)
   applications_path = File.join(archive_path, '/Products/Applications')
-  provisionprofile_path = Dir[File.join(applications_path, '*.app/embedded.provisionprofile')].first
+  provisionprofile_path = Dir[File.join(applications_path, '*.app/Contents/embedded.provisionprofile')].first
 
   fail_with_message('No provisionprofile_path found') if provisionprofile_path.nil?
 
@@ -40,19 +40,8 @@ def collect_provision_info(archive_path)
 end
 
 def export_method(provisionprofile_content)
-  # if ProvisionedDevices: !nil & "get-task-allow": true -> development
-  # if ProvisionedDevices: !nil & "get-task-allow": false -> ad-hoc
-  # if ProvisionedDevices: nil & "ProvisionsAllDevices": "true" -> enterprise
-  # if ProvisionedDevices: nil & ProvisionsAllDevices: nil -> app-store
   if provisionprofile_content['ProvisionedDevices'].nil?
-    return 'enterprise' if !provisionprofile_content['ProvisionsAllDevices'].nil? && (provisionprofile_content['ProvisionsAllDevices'] == true || provisionprofile_content['ProvisionsAllDevices'] == 'true')
     return 'app-store'
-  else
-    unless provisionprofile_content['Entitlements'].nil?
-      entitlements = provisionprofile_content['Entitlements']
-      return 'development' if !entitlements['get-task-allow'].nil? && (entitlements['get-task-allow'] == true || entitlements['get-task-allow'] == 'true')
-      return 'ad-hoc'
-    end
   end
   return 'development'
 end
