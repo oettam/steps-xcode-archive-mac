@@ -13,12 +13,12 @@ end
 
 def collect_provision_info(archive_path)
   applications_path = File.join(archive_path, '/Products/Applications')
-  mobileprovision_path = Dir[File.join(applications_path, '*.app/embedded.mobileprovision')].first
+  provisionprofile_path = Dir[File.join(applications_path, '*.app/embedded.provisionprofile')].first
 
-  fail_with_message('No mobileprovision_path found') if mobileprovision_path.nil?
+  fail_with_message('No provisionprofile_path found') if provisionprofile_path.nil?
 
   content = {}
-  plist = Plist.parse_xml(`security cms -D -i "#{mobileprovision_path}"`)
+  plist = Plist.parse_xml(`security cms -D -i "#{provisionprofile_path}"`)
 
   plist.each do |key, value|
     next if key == 'DeveloperCertificates'
@@ -39,17 +39,17 @@ def collect_provision_info(archive_path)
   content
 end
 
-def export_method(mobileprovision_content)
+def export_method(provisionprofile_content)
   # if ProvisionedDevices: !nil & "get-task-allow": true -> development
   # if ProvisionedDevices: !nil & "get-task-allow": false -> ad-hoc
   # if ProvisionedDevices: nil & "ProvisionsAllDevices": "true" -> enterprise
   # if ProvisionedDevices: nil & ProvisionsAllDevices: nil -> app-store
-  if mobileprovision_content['ProvisionedDevices'].nil?
-    return 'enterprise' if !mobileprovision_content['ProvisionsAllDevices'].nil? && (mobileprovision_content['ProvisionsAllDevices'] == true || mobileprovision_content['ProvisionsAllDevices'] == 'true')
+  if provisionprofile_content['ProvisionedDevices'].nil?
+    return 'enterprise' if !provisionprofile_content['ProvisionsAllDevices'].nil? && (provisionprofile_content['ProvisionsAllDevices'] == true || provisionprofile_content['ProvisionsAllDevices'] == 'true')
     return 'app-store'
   else
-    unless mobileprovision_content['Entitlements'].nil?
-      entitlements = mobileprovision_content['Entitlements']
+    unless provisionprofile_content['Entitlements'].nil?
+      entitlements = provisionprofile_content['Entitlements']
       return 'development' if !entitlements['get-task-allow'].nil? && (entitlements['get-task-allow'] == true || entitlements['get-task-allow'] == 'true')
       return 'ad-hoc'
     end
@@ -87,11 +87,11 @@ fail_with_message('archive_path not specified') unless options[:archive_path]
 puts "(i) archive_path: #{options[:archive_path]}"
 
 puts
-puts '==> Collect infos from mobileprovision'
+puts '==> Collect infos from provisionprofile'
 
-mobileprovision_content = collect_provision_info(options[:archive_path])
-# team_id = mobileprovision_content['TeamIdentifier'].first
-method = export_method(mobileprovision_content)
+provisionprofile_content = collect_provision_info(options[:archive_path])
+# team_id = provisionprofile_content['TeamIdentifier'].first
+method = export_method(provisionprofile_content)
 
 puts
 puts '==> Create export options'
