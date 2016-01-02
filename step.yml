@@ -105,7 +105,7 @@ inputs:
         - "APP"
         - "PKG"
       is_required: true
-  - export_method: "development"
+  - export_method: "none"
     opts:
       title: "Export method"
       description: |-
@@ -113,7 +113,6 @@ inputs:
         See `xcodebuild -help` for more information.
       value_options:
         - "app-store"
-        - "enterprise"
         - "development"
         - "developer-id"
       is_required: true
