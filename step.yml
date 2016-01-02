@@ -122,9 +122,9 @@ inputs:
       is_required: true
       is_expand: false
 outputs:
-  - BITRISE_APP_PATH:
+  - BITRISE_EXPORTED_FILE_PATH:
     opts:
-      title: The created .app file's path
+      title: The created .app or .pkg file's path
   - BITRISE_DSYM_PATH:
     opts:
       title: The created .dSYM.zip file's path

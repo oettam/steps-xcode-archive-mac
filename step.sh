@@ -309,8 +309,8 @@ fi
 #
 # Export *.app path
 echo " (i) The APP is now available at: ${app_path}"
-envman add --key BITRISE_APP_PATH --value "${app_path}"
-echo ' (i) The APP path is now available in the Environment Variable: $BITRISE_APP_PATH'
+envman add --key BITRISE_EXPORTED_FILE_PATH --value "${app_path}"
+echo ' (i) The APP path is now available in the Environment Variable: $BITRISE_EXPORTED_FILE_PATH'
 
 #
 # dSYM handling
