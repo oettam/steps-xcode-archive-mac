@@ -212,8 +212,8 @@ if [[ "${xcode_major_version}" == "6" ]] ; then
 	echo " (i) Found Profile Name for signing: ${profile_name}"
 
 	#
-	# Use the Provisioning Profile name to export the APP
-	export_command="$export_command -exportFormat APP"
+	# Use the Provisioning Profile name to export the APP or PKG
+	export_command="$export_command -exportFormat \"${export_format}\""
 	export_command="$export_command -archivePath \"${archive_path}\""
 	export_command="$export_command -exportPath \"${app_path}\""
 	export_command="$export_command -exportProvisioningProfile \"${profile_name}\""

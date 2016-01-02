@@ -96,6 +96,13 @@ inputs:
         Call xcodebuild -help for available export options.
       is_required: false
       is_expand: true
+  - export_format: "APP"
+    opts:
+      title: "In case of an Xcode 6 build, the format of the export has to be specified as APP or PKG."
+      value_options:
+        - "APP"
+        - "PKG"
+      is_required: true
   - is_clean_build: "yes"
     opts:
       title: "Do a clean Xcode build before the archive?"
