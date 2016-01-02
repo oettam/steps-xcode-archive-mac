@@ -122,6 +122,9 @@ inputs:
       is_required: true
       is_expand: false
 outputs:
+  - BITRISE_ARCHIVE_PATH:
+    opts:
+      title: The created archive's path
   - BITRISE_EXPORTED_FILE_PATH:
     opts:
       title: The created .app or .pkg file's path

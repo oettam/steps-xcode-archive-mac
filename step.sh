@@ -175,6 +175,10 @@ echo
 echo "=> Exporting app from generated Archive ..."
 echo
 
+echo " (i) The archive path is now available at: ${archive_path}"
+envman add --key BITRISE_ARCHIVE_PATH --value "${archive_path}"
+echo ' (i) The archive path is now available in the Environment Variable: $BITRISE_ARCHIVE_PATH'
+
 export_command="xcodebuild -exportArchive"
 
 if [[ "${xcode_major_version}" == "6" ]] ; then
