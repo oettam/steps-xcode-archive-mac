@@ -98,10 +98,24 @@ inputs:
       is_expand: true
   - export_format: "APP"
     opts:
-      title: "In case of an Xcode 6 build, the format of the export has to be specified as APP or PKG."
+      title: "Export format"
+      description: |-
+        "In case of an Xcode 6 build, the format of the export has to be specified as APP or PKG."
       value_options:
         - "APP"
         - "PKG"
+      is_required: true
+  - export_method: "development"
+    opts:
+      title: "Export method"
+      description: |-
+        The method for exporting used in `exportOptions` plist, relevant for builds with Xcode version 7 and above.
+        See `xcodebuild -help` for more information.
+      value_options:
+        - "app-store"
+        - "enterprise"
+        - "development"
+        - "developer-id"
       is_required: true
   - is_clean_build: "yes"
     opts:

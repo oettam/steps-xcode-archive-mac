@@ -242,7 +242,8 @@ else
 		bundle install
 		bundle exec ruby "./generate_export_options.rb" \
 			-o "${export_options_path}" \
-			-a "${archive_path}"
+			-a "${archive_path}" \
+			-e "${export_method}"
 		cd "${curr_pwd}"
 	fi
 
