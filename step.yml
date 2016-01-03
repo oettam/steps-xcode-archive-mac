@@ -86,13 +86,6 @@ inputs:
       description: |-
         Used for Xcode version 7 and above.
         Specifies a path to a plist file that configures archive exporting.
-        If empty, step generates these options based on provisioning profile,
-        in case of the methods development, or App Store.
-        Auto generated export options available for export methods:
-        - app-store
-        - development
-        If step doesn't find export method based on provisioning profile, development will be use.
-        If you would like to export a Developer ID signed application, please create a plist with the corresponding method.
         Call xcodebuild -help for available export options.
       is_required: false
       is_expand: true
