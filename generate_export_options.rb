@@ -42,7 +42,7 @@ puts "(i) export_options_path: #{options[:export_options_path]}"
 fail_with_message('archive_path not specified') unless options[:archive_path]
 puts "(i) archive_path: #{options[:archive_path]}"
 
-method = options[:export_method]
+method = options[:export_method] unless options[:export_method] == 'none'
 
 puts
 puts '==> Create export options'
