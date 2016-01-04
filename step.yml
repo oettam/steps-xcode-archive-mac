@@ -84,7 +84,6 @@ inputs:
     opts:
       title: "Export options path"
       description: |-
-        Used for Xcode version 7 and above.
         Specifies a path to a plist file that configures archive exporting.
         If not specified, it will generate an export options plist with the method specified in `export_method`.
         Call xcodebuild -help for available export options.
@@ -95,6 +94,8 @@ inputs:
       title: "Export method"
       description: |-
         The method for exporting used in `exportOptions` plist.
+        `none` means no resigning during export.
+        Upload and install proper certificates when exporting with different identity than the one used for archive.
         See `xcodebuild -help` for more information.
       value_options:
         - "app-store"
