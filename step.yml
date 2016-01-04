@@ -98,7 +98,7 @@ inputs:
         - "APP"
         - "PKG"
       is_required: true
-  - export_method: "none"
+  - export_method:
     opts:
       title: "Export method"
       description: |-
@@ -108,6 +108,7 @@ inputs:
         - "app-store"
         - "development"
         - "developer-id"
+        - "none"
       is_required: true
   - is_clean_build: "yes"
     opts:
@@ -128,9 +129,6 @@ inputs:
       is_required: true
       is_expand: false
 outputs:
-  - BITRISE_ARCHIVE_PATH:
-    opts:
-      title: The created archive's path
   - BITRISE_EXPORTED_FILE_PATH:
     opts:
       title: The created .app or .pkg file's path

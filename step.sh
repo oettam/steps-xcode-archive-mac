@@ -175,141 +175,82 @@ echo
 echo "=> Exporting app from generated Archive ..."
 echo
 
-echo " (i) The archive path is now available at: ${archive_path}"
-envman add --key BITRISE_ARCHIVE_PATH --value "${archive_path}"
-echo ' (i) The archive path is now available in the Environment Variable: $BITRISE_ARCHIVE_PATH'
-
 export_command="xcodebuild -exportArchive"
 
-if [[ "${xcode_major_version}" == "6" ]] ; then
-	#
-	# Get the name of the profile which was used for creating the archive
-	# --> Search for embedded.provisionprofile in the xcarchive.
-	#     It should contain a .app folder in the xcarchive folder
-	#     under the Products/Applications folder
-	embedded_prov_path=""
-
-	IFS=$'\n'
-	for a_emb_path in $(find "${archive_path}/Products/Applications" -type f -maxdepth 3 -ipath "*/embedded.provisionprofile")
-	do
-		echo " * embedded.provisionprofile: ${a_emb_path}"
-		if [ ! -z "${embedded_prov_path}" ] ; then
-			finalcleanup "More than one \`embedded.provisionprofile\` found in \`${archive_path}/Products/Applications/*.app\`"
-			exit 1
-		fi
-		embedded_prov_path="${a_emb_path}"
-	done
-	unset IFS
-
-	if [ -z "${embedded_prov_path}" ] ; then
-		finalcleanup "No \`embedded.provisionprofile\` found in \`${archive_path}/Products/Applications/*.app\`"
-		exit 1
-	fi
-
-	#
-	# We have the provisionprofile file - let's get the Profile name from it
-	profile_name=`/usr/libexec/PlistBuddy -c 'Print :Name' /dev/stdin <<< $(security cms -D -i "${embedded_prov_path}")`
-	if [ $? -ne 0 ] ; then
-		finalcleanup "Missing embedded provisionprofile in xcarchive"
-	fi
-
-	echo " (i) Found Profile Name for signing: ${profile_name}"
-
-	#
-	# Use the Provisioning Profile name to export the APP or PKG
-	export_command="$export_command -exportFormat \"${export_format}\""
-	export_command="$export_command -archivePath \"${archive_path}\""
-	export_command="$export_command -exportPath \"${app_path}\""
-	export_command="$export_command -exportProvisioningProfile \"${profile_name}\""
-
-	if [[ "${output_tool}" == "xcpretty" ]] ; then
-		export_command="set -o pipefail && $export_command | xcpretty"
-	fi
-
-	echo
-	echo "export command:"
-	echo "$export_command"
-	echo
-
-	eval $export_command
-else
-	echo " (i) Using Xcode 7 'exportOptionsPlist' option"
-
-	if [ -z "${export_options_path}" ] ; then
-		export_options_path="${output_dir}/export_options.plist"
-		curr_pwd="$(pwd)"
-		cd "${THIS_SCRIPT_DIR}"
-		bundle install
-		bundle exec ruby "./generate_export_options.rb" \
-			-o "${export_options_path}" \
-			-a "${archive_path}" \
-			-e "${export_method}"
-		cd "${curr_pwd}"
-	fi
-
-	#
-	# Because of an RVM issue which conflicts with `xcodebuild`'s new
-	#  `-exportOptionsPlist` option
-	# link: https://github.com/bitrise-io/steps-xcode-archive/issues/13
-	command_exists () {
-		command -v "$1" >/dev/null 2>&1 ;
-	}
-	if command_exists rvm ; then
-		set +x
-		echo "=> Applying RVM 'fix'"
-		[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm"
-		rvm use system
-	fi
-
-	tmp_dir=$(mktemp -d -t bitrise-xcarchive)
-
-	export_command="$export_command -archivePath \"${archive_path}\""
-	export_command="$export_command -exportPath \"${tmp_dir}/${scheme}\""
-	export_command="$export_command -exportOptionsPlist \"${export_options_path}\""
-
-	if [[ "${output_tool}" == "xcpretty" ]] ; then
-		export_command="set -o pipefail && $export_command | xcpretty"
-	fi
-
-	echo
-	echo "export command:"
-	echo "$export_command"
-	echo
-	eval $export_command
-
-	# Searching for app
-	exported_app_path=""
-	IFS=$'\n'
-	for a_file_path in $(find "$tmp_dir" -maxdepth 1 -mindepth 1 -type d)
-	do
-		filename=$(basename "$a_file_path")
-		echo " -> moving file: ${a_file_path} to ${output_dir}"
-
-		mv "${a_file_path}" "${output_dir}"
-
-		regex=".*.app"
-		if [[ "${filename}" =~ $regex ]] ; then
-			if [[ -z "${exported_app_path}" ]] ; then
-				exported_app_path="${output_dir}/${filename}"
-			else
-				echo " (!) More app file found"
-			fi
-		fi
-	done
-	unset IFS
-
-	if [[ -z "${exported_app_path}" ]] ; then
-		echo " (!) No app file found"
-		exit 1
-	fi
-
-	if [ ! -e "${exported_app_path}" ] ; then
-		echo " (!) Failed to move app to output dir"
-		exit 1
-	fi
-
-	app_path="${exported_app_path}"
+if [ -z "${export_options_path}" ] ; then
+	export_options_path="${output_dir}/export_options.plist"
+	curr_pwd="$(pwd)"
+	cd "${THIS_SCRIPT_DIR}"
+	bundle install
+	bundle exec ruby "./generate_export_options.rb" \
+		-o "${export_options_path}" \
+		-a "${archive_path}" \
+		-e "${export_method}"
+	cd "${curr_pwd}"
 fi
+
+#
+# Because of an RVM issue which conflicts with `xcodebuild`'s new
+#  `-exportOptionsPlist` option
+# link: https://github.com/bitrise-io/steps-xcode-archive/issues/13
+command_exists () {
+	command -v "$1" >/dev/null 2>&1 ;
+}
+if command_exists rvm ; then
+	set +x
+	echo "=> Applying RVM 'fix'"
+	[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm"
+	rvm use system
+fi
+
+tmp_dir=$(mktemp -d -t bitrise-xcarchive)
+
+export_command="$export_command -archivePath \"${archive_path}\""
+export_command="$export_command -exportPath \"${tmp_dir}/${scheme}\""
+export_command="$export_command -exportOptionsPlist \"${export_options_path}\""
+
+if [[ "${output_tool}" == "xcpretty" ]] ; then
+	export_command="set -o pipefail && $export_command | xcpretty"
+fi
+
+echo
+echo "export command:"
+echo "$export_command"
+echo
+eval $export_command
+
+# Searching for app
+exported_app_path=""
+IFS=$'\n'
+for a_file_path in $(find "$tmp_dir" -maxdepth 1 -mindepth 1 -type d)
+do
+	filename=$(basename "$a_file_path")
+	echo " -> moving file: ${a_file_path} to ${output_dir}"
+
+	mv "${a_file_path}" "${output_dir}"
+
+	regex=".*.app"
+	if [[ "${filename}" =~ $regex ]] ; then
+		if [[ -z "${exported_app_path}" ]] ; then
+			exported_app_path="${output_dir}/${filename}"
+		else
+			echo " (!) More app file found"
+		fi
+	fi
+done
+unset IFS
+
+if [[ -z "${exported_app_path}" ]] ; then
+	echo " (!) No app file found"
+	exit 1
+fi
+
+if [ ! -e "${exported_app_path}" ] ; then
+	echo " (!) Failed to move app to output dir"
+	exit 1
+fi
+
+app_path="${exported_app_path}"
 
 #
 # Export *.app path
