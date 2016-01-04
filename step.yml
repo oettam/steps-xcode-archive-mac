@@ -98,7 +98,7 @@ inputs:
         - "APP"
         - "PKG"
       is_required: true
-  - export_method: "none"
+  - export_method: "development"
     opts:
       title: "Export method"
       description: |-
