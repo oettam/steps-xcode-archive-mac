@@ -79,7 +79,7 @@ cd -
 
 archive_tmp_dir=$(mktemp -d -t bitrise-xcarchive)
 archive_path="${archive_tmp_dir}/${scheme}.xcarchive"
-app_path="${output_dir}/${scheme}.app"
+file_path="${output_dir}/${scheme}.app"
 dsym_zip_path="${output_dir}/${scheme}.dSYM.zip"
 
 if [ -z "${workdir}" ] ; then
@@ -97,7 +97,7 @@ echo " * scheme: ${scheme}"
 echo " * workdir: ${workdir}"
 echo " * output_dir: ${output_dir}"
 echo " * archive_path: ${archive_path}"
-echo " * app_path: ${app_path}"
+echo " * file_path: ${file_path}"
 echo " * dsym_zip_path: ${dsym_zip_path}"
 echo " * is_force_code_sign: ${is_force_code_sign}"
 echo " * is_clean_build: ${is_clean_build}"
@@ -137,9 +137,9 @@ function finalcleanup {
 
 #
 # Bit of cleanup
-if [ -f "${app_path}" ] ; then
-	echo " (!) App at path (${app_path}) already exists - removing it"
-	rm "${app_path}"
+if [ -f "${file_path}" ] ; then
+	echo " (!) App at path (${file_path}) already exists - removing it"
+	rm "${file_path}"
 fi
 
 echo
@@ -225,7 +225,7 @@ echo
 eval $export_command
 
 # Searching for app
-exported_app_path=""
+exported_file_path=""
 IFS=$'\n'
 for a_file_path in $(find "$tmp_dir" -maxdepth 1 -mindepth 1 -type d)
 do
@@ -236,8 +236,8 @@ do
 
 	regex=".*.app"
 	if [[ "${filename}" =~ $regex ]] ; then
-		if [[ -z "${exported_app_path}" ]] ; then
-			exported_app_path="${output_dir}/${filename}"
+		if [[ -z "${exported_file_path}" ]] ; then
+			exported_file_path="${output_dir}/${filename}"
 		else
 			echo " (!) More app file found"
 		fi
@@ -245,22 +245,22 @@ do
 done
 unset IFS
 
-if [[ -z "${exported_app_path}" ]] ; then
-	echo " (!) No app file found"
+if [[ -z "${exported_file_path}" ]] ; then
+	echo " (!) No exported file found"
 	exit 1
 fi
 
-if [ ! -e "${exported_app_path}" ] ; then
+if [ ! -e "${exported_file_path}" ] ; then
 	echo " (!) Failed to move app to output dir"
 	exit 1
 fi
 
-app_path="${exported_app_path}"
+file_path="${exported_file_path}"
 
 #
 # Export *.app path
-echo " (i) The APP is now available at: ${app_path}"
-envman add --key BITRISE_EXPORTED_FILE_PATH --value "${app_path}"
+echo " (i) The APP is now available at: ${file_path}"
+envman add --key BITRISE_EXPORTED_FILE_PATH --value "${file_path}"
 echo ' (i) The APP path is now available in the Environment Variable: $BITRISE_EXPORTED_FILE_PATH'
 
 #
