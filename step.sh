@@ -203,10 +203,15 @@ if command_exists rvm ; then
 	rvm use system
 fi
 
+export_format="app"
+if [[ "${export_method}" == "app-store" ]]; then
+	export_format="pkg"
+fi
+
 tmp_dir=$(mktemp -d -t bitrise-xcarchive)
 
 export_command="$export_command -archivePath \"${archive_path}\""
-export_command="$export_command -exportPath \"${tmp_dir}/${scheme}\""
+export_command="$export_command -exportPath \"${tmp_dir}/${scheme}.${export_format}\""
 export_command="$export_command -exportOptionsPlist \"${export_options_path}\""
 
 if [[ "${output_tool}" == "xcpretty" ]] ; then
