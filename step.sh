@@ -238,9 +238,12 @@ IFS=$'\n'
 for a_file_path in $(find "$tmp_dir" -maxdepth 1 -mindepth 1 -type d)
 do
 	filename=$(basename "$a_file_path")
-	echo " -> moving file: ${a_file_path} to ${output_dir}"
+	app_zip_path="${output_dir}/${scheme}.${export_format}.zip"
+	echo " -> zipping file: ${a_file_path} to ${output_dir}"
 
 	mv "${a_file_path}" "${output_dir}"
+	cd ${output_dir}
+	/usr/bin/zip -rTy "${app_zip_path}" "${scheme}.${export_format}"
 
 	regex=".*.app"
 	if [[ "${filename}" =~ $regex ]] ; then
