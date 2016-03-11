@@ -3,9 +3,9 @@ summary: |-
   Create an archive for your OS X project so you can share it, upload it, deploy it and catch them
   all! Well, maybe not the last one.
 description: ""
-website: https://github.com/vasarhelyia/steps-new-xcode-archive-mac
-source_code_url: https://github.com/vasarhelyia/steps-new-xcode-archive-mac
-support_url: https://github.com/vasarhelyia/steps-new-xcode-archive-mac/issues
+website: https://github.com/vasarhelyia/steps-xcode-archive-mac
+source_code_url: https://github.com/vasarhelyia/steps-xcode-archive-mac
+support_url: https://github.com/vasarhelyia/steps-xcode-archive-mac/issues
 host_os_tags:
   - "osx-10.10"
 project_type_tags:
