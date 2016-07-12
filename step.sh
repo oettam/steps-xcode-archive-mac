@@ -5,24 +5,19 @@ THIS_SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 set -e
 
 #
-# Detect Xcode major version
-xcode_major_version=""
-major_version_regex="Xcode ([0-9]).[0-9]"
-out=$(xcodebuild -version)
-if [[ "${out}" =~ ${major_version_regex} ]] ; then
-	xcode_major_version="${BASH_REMATCH[1]}"
-fi
+# Validate parameters
+echo
+echo "========== Configs =========="
+echo " * workdir: ${workdir}"
+echo " * project_path: ${project_path}"
+echo " * scheme: ${scheme}"
+echo " * configuration: ${configuration}"
+echo " * output_dir: ${output_dir}"
+echo " * force_provisioning_profile: $force_provisioning_profile"
+echo " * force_code_sign_identity: $force_code_sign_identity"
+echo " * is_clean_build: ${is_clean_build}"
+echo " * output_tool: ${output_tool}"
 
-if [ ! "${xcode_major_version}" == "7" ] && [ ! "${xcode_major_version}" == "6" ] ; then
-	echo "Invalid xcode major version: ${xcode_major_version}"
-	exit 1
-fi
-
-echo "(i) xcode_major_version: ${xcode_major_version}"
-
-
-#
-# Required parameters
 if [ -z "${project_path}" ] ; then
 	echo "[!] Missing required input: project_path"
 	exit 1
@@ -43,22 +38,45 @@ if [[ "${output_tool}" != "xcpretty" && "${output_tool}" != "xcodebuild" ]] ; th
 	exit 1
 fi
 
-set +e
-
-if [[ "${output_tool}" == "xcpretty" ]] ; then
-	xcpretty_version=$(xcpretty --version)
-	exit_code=$?
-	if [[ $exit_code != 0 || -z $xcpretty_version ]] ; then
-		echo
-		echo " (!) xcpretty is not installed"
-		echo "     For xcpretty installation see: 'https://github.com/supermarin/xcpretty',"
-		echo "     or use 'xcodebuild' as 'output_tool'."
-		echo
-		exit 1
-	fi
+if [ ${is_force_code_sign} != "no" ] ; then
+	echo "is_force_code_sign is deprecated!"
+	echo "Use `force_code_sign_identity` and `force_provisioning_profile` instead."
 fi
 
-set -e
+# Detect Xcode major version
+xcode_major_version=""
+major_version_regex="Xcode ([0-9]).[0-9]"
+out=$(xcodebuild -version)
+if [[ "${out}" =~ ${major_version_regex} ]] ; then
+	xcode_major_version="${BASH_REMATCH[1]}"
+fi
+
+IFS=$'\n'
+xcodebuild_version_split=($out)
+unset IFS
+
+xcodebuild_version="${xcodebuild_version_split[0]} (${xcodebuild_version_split[1]})"
+echo "* xcodebuild_version: $xcodebuild_version"
+
+# Detect xcpretty version
+xcpretty_version=""
+if [[ "${output_tool}" == "xcpretty" ]] ; then
+	set +e
+	xcpretty_version=$(xcpretty --version)
+	exit_code=$?
+	if [[ $exit_code != 0 || -z "$xcpretty_version" ]] ; then
+		echo "xcpretty is not installed
+		For xcpretty installation see: 'https://github.com/supermarin/xcpretty',
+		or use 'xcodebuild' as 'output_tool'.
+		"
+		output_tool="xcodebuild"
+	else
+		echo "* xcpretty_version: $xcpretty_version" 
+	fi
+	set -e
+fi
+
+echo
 
 #
 # Project-or-Workspace flag
@@ -82,26 +100,15 @@ archive_path="${archive_tmp_dir}/${scheme}.xcarchive"
 file_path="${output_dir}/${scheme}.app"
 dsym_zip_path="${output_dir}/${scheme}.dSYM.zip"
 
-if [ -z "${workdir}" ] ; then
-	workdir="$(pwd)"
-fi
-
-#
-# Print configs
-echo
-echo "========== Configs =========="
-echo " * CONFIG_xcode_project_action: ${CONFIG_xcode_project_action}"
-echo " * output_tool: ${output_tool}"
-echo " * project_path: ${project_path}"
-echo " * scheme: ${scheme}"
-echo " * workdir: ${workdir}"
-echo " * output_dir: ${output_dir}"
 echo " * archive_path: ${archive_path}"
 echo " * file_path: ${file_path}"
 echo " * dsym_zip_path: ${dsym_zip_path}"
-echo " * is_force_code_sign: ${is_force_code_sign}"
-echo " * is_clean_build: ${is_clean_build}"
-echo " * configuration: ${configuration}"
+
+echo
+
+if [ -z "${workdir}" ] ; then
+	workdir="$(pwd)"
+fi
 
 if [ ! -z "${workdir}" ] ; then
 	echo
@@ -152,11 +159,16 @@ archive_cmd="xcodebuild ${CONFIG_xcode_project_action} \"${project_path}\""
 archive_cmd="$archive_cmd -scheme \"${scheme}\" ${xcode_configuration}"
 archive_cmd="$archive_cmd ${clean_build_param} archive -archivePath \"${archive_path}\""
 
-if [[ "${is_force_code_sign}" == "yes" ]] ; then
-	echo " (!) Using Force Code Signing mode!"
+if [[ -n "${force_provisioning_profile}" ]] ; then
+	echo_details "Forcing Provisioning Profile: ${force_provisioning_profile}"
 
-	archive_cmd="$archive_cmd PROVISIONING_PROFILE=\"${BITRISE_PROVISIONING_PROFILE_ID}\""
-	archive_cmd="$archive_cmd CODE_SIGN_IDENTITY=\"${BITRISE_CODE_SIGN_IDENTITY}\""
+	archive_cmd="$archive_cmd PROVISIONING_PROFILE=\"${force_provisioning_profile}\""
+fi
+
+if [[ -n "${force_code_sign_identity}" ]] ; then
+	echo_details "Forcing Code Signing Identity: ${force_code_sign_identity}"
+
+	archive_cmd="$archive_cmd CODE_SIGN_IDENTITY=\"${force_code_sign_identity}\""
 fi
 
 if [[ "${output_tool}" == "xcpretty" ]] ; then
