@@ -1,6 +1,12 @@
-## Changelog (Current version: 1.1.5)
+## Changelog (Current version: 1.1.6)
 
 -----------------
+
+### 1.1.6 (2016 Jul 12)
+
+* [babf15f] prepare for 1.1.6
+* [6ef5aae] Merge pull request #10 from bitrise-steplib/step_yml_update
+* [fc0d535] step.yml update
 
 ### 1.1.5 (2016 Jul 12)
 
