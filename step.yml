@@ -86,14 +86,12 @@ inputs:
       description: |-
         Force xcodebuild to use specified Code Sign Identity.
 
-        Specify code sign identity as full ID (e.g. `iPhone Developer: Bitrise Bot (VV2J4SV8V4)`)
-        or specify code sign group ( `iPhone Developer` or `iPhone Distribution` ).
+        Specify code sign identity as full ID (e.g. `Mac Developer: Bitrise Bot (VV2J4SV8V4)`)
+        or specify code sign group ( `Mac Developer` or `Mac Distribution` ).
 
         You also have to **specify the Identity in the format it's stored in Xcode project settings**,
         and **not how it's presented in the Xcode.app GUI**!
-        This means that instead of `iOS` (`iOS Distribution/Development`) you have to use
-        `iPhone` (`iPhone Distribution` or `iPhone Development`).
-        **Capitalization also matters**, `iPhone Distribution` works but `iphone distribution` does not!
+        **Capitalization also matters**, `Mac Distribution` works but `mac distribution` does not!
   - force_provisioning_profile:
     opts:
       title: "Force code signing with Provisioning Profile"
