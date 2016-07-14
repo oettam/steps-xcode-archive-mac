@@ -223,15 +223,16 @@ fi
 tmp_dir=$(mktemp -d -t bitrise-xcarchive)
 
 export_command="$export_command -archivePath \"${archive_path}\""
-export_command="$export_command -exportPath \"${tmp_dir}/${scheme}.${export_format}\""
 
 # It seems -exportOptionsPlist doesn't support the 'none' method, and
 # an absense of an explicit method defaults to 'development', so we
 # have to use the older, deprecated style in that case
 if [[ "${export_method}" == "none" ]]; then
 	export_command="$export_command -exportFormat APP"
+	export_command="$export_command -exportPath \"${tmp_dir}/${scheme}.${export_format}\""
 else
 	export_command="$export_command -exportOptionsPlist \"${export_options_path}\""
+	export_command="$export_command -exportPath \"${tmp_dir}"
 fi
 
 if [[ "${output_tool}" == "xcpretty" ]] ; then
