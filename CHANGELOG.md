@@ -1,6 +1,13 @@
-## Changelog (Current version: 1.1.6)
+## Changelog (Current version: 1.2.0)
 
 -----------------
+
+### 1.2.0 (2016 Jul 14)
+
+* [dd888bb] prepare for 1.2.0
+* [3e9483f] Merge pull request #11 from bitrise-steplib/export_path_fix
+* [2494dbf] use export options with depman
+* [69a985c] export path fix
 
 ### 1.1.6 (2016 Jul 12)
 
@@ -66,4 +73,4 @@
 
 -----------------
 
-Updated: 2016 Jul 12
+Updated: 2016 Jul 14
