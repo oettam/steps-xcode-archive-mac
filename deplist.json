@@ -1,0 +1,8 @@
+{
+	"deps": [
+		{
+			"url": "https://github.com/bitrise-tools/xcodebuild-export-options-generator.git",
+			"store_path": "export-options"
+		}
+	]
+}

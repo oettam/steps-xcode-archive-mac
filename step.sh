@@ -56,7 +56,7 @@ xcodebuild_version_split=($out)
 unset IFS
 
 xcodebuild_version="${xcodebuild_version_split[0]} (${xcodebuild_version_split[1]})"
-echo "* xcodebuild_version: $xcodebuild_version"
+echo " * xcodebuild_version: $xcodebuild_version"
 
 # Detect xcpretty version
 xcpretty_version=""
@@ -71,7 +71,7 @@ if [[ "${output_tool}" == "xcpretty" ]] ; then
 		"
 		output_tool="xcodebuild"
 	else
-		echo "* xcpretty_version: $xcpretty_version" 
+		echo " * xcpretty_version: $xcpretty_version" 
 	fi
 	set -e
 fi
@@ -187,18 +187,16 @@ echo
 echo "=> Exporting app from generated Archive ..."
 echo
 
-export_command="xcodebuild -exportArchive"
-
 if [ -z "${export_options_path}" ] ; then
+	gemfile_path="$THIS_SCRIPT_DIR/export-options/Gemfile"
+	generate_osx_export_options_script_path="$THIS_SCRIPT_DIR/export-options/generate_osx_export_options.rb"
 	export_options_path="${output_dir}/export_options.plist"
-	curr_pwd="$(pwd)"
-	cd "${THIS_SCRIPT_DIR}"
-	bundle install
-	bundle exec ruby "./generate_export_options.rb" \
+
+	BUNDLE_GEMFILE=$gemfile_path bundle install
+	BUNDLE_GEMFILE=$gemfile_path bundle exec ruby $generate_osx_export_options_script_path \
 		-o "${export_options_path}" \
 		-a "${archive_path}" \
 		-e "${export_method}"
-	cd "${curr_pwd}"
 fi
 
 #
@@ -222,6 +220,7 @@ fi
 
 tmp_dir=$(mktemp -d -t bitrise-xcarchive)
 
+export_command="xcodebuild -exportArchive"
 export_command="$export_command -archivePath \"${archive_path}\""
 
 # It seems -exportOptionsPlist doesn't support the 'none' method, and
@@ -232,7 +231,7 @@ if [[ "${export_method}" == "none" ]]; then
 	export_command="$export_command -exportPath \"${tmp_dir}/${scheme}.${export_format}\""
 else
 	export_command="$export_command -exportOptionsPlist \"${export_options_path}\""
-	export_command="$export_command -exportPath \"${tmp_dir}"
+	export_command="$export_command -exportPath \"${tmp_dir}\""
 fi
 
 if [[ "${output_tool}" == "xcpretty" ]] ; then
