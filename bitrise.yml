@@ -61,7 +61,7 @@ workflows:
         - workdir: $PROJECT_WORKDIR
         - output_tool: xcpretty
         # - output_tool: xcodebuild
-        - export_method: development
+        - export_method: none
         - force_provisioning_profile: $BITRISE_PROVISIONING_PROFILE_ID
         - force_code_sign_identity: $BITRISE_CODE_SIGN_IDENTITY
         - export_all_dsyms: "yes"
