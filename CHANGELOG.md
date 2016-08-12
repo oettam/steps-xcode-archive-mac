@@ -1,6 +1,12 @@
-## Changelog (Current version: 1.2.0)
+## Changelog (Current version: 1.3.0)
 
 -----------------
+
+### 1.3.0 (2016 Aug 12)
+
+* [3c1bbea] Merge pull request #13 from bitrise-steplib/review
+* [3912202] test update
+* [2446020] step review, is_export_xcarchive_zip, is_export_all_dsyms
 
 ### 1.2.0 (2016 Jul 14)
 
@@ -73,4 +79,4 @@
 
 -----------------
 
-Updated: 2016 Jul 14
+Updated: 2016 Aug 12
