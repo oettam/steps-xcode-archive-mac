@@ -59,8 +59,7 @@ inputs:
       title: "Output directory path"
       summary: ""
       description: |
-        This directory will contain the generated Xcode archive (.xcarchive)
-        and the .app file.
+        This directory will contain the generated .app or .pkg file's and .dSYM.zip files.
   - is_force_code_sign: "no"
     opts:
       title: "Use force code signing attributes?"
@@ -147,6 +146,25 @@ inputs:
       - xcpretty
       - xcodebuild
       is_required: true
+  - is_export_xcarchive_zip: "no"
+    opts:
+      title: Export the generated archive?
+      description: |
+        If this input is set to `yes`, the generated .xcarchive will be zipped and moved to `output_dir`.
+      value_options:
+      - "yes"
+      - "no"
+      is_required: true
+  - is_export_all_dsyms: "no"
+    opts:
+      title: Export all dsyms?
+      description: |-
+        If this input is set to `yes` step will collect every dsym (.app dsym and framwork dsyms) in a directory, zip it and export the zipped directory path.
+        Otherwise only .app dsym will be zipped and the zip path exported.
+      value_options:
+      - "yes"
+      - "no"
+      is_required: true
 outputs:
   - BITRISE_EXPORTED_FILE_PATH:
     opts:
@@ -154,3 +172,6 @@ outputs:
   - BITRISE_DSYM_PATH:
     opts:
       title: The created .dSYM.zip file's path
+  - BITRISE_XCARCHIVE_PATH:
+    opts:
+      title: The created .xcarchive.zip file's path
