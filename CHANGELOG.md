@@ -1,6 +1,11 @@
-## Changelog (Current version: 1.3.0)
+## Changelog (Current version: 1.3.1)
 
 -----------------
+
+### 1.3.1 (2016 Oct 04)
+
+* [881901a] prepare for 1.3.1
+* [a3845c0] zip fix (#14)
 
 ### 1.3.0 (2016 Aug 12)
 
@@ -79,4 +84,4 @@
 
 -----------------
 
-Updated: 2016 Aug 12
+Updated: 2016 Oct 04
