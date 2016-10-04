@@ -327,33 +327,36 @@ echo
 eval $export_command
 echo
 
-# Searching for APP
+# Searching for output file
 exported_file_path=""
+deploy_path=""
+
 IFS=$'\n'
-for a_file_path in $(find "$tmp_dir" -maxdepth 1 -mindepth 1)
+for a_file_path in $(find "$tmp_dir" -maxdepth 1 -mindepth 1 -name "*.${export_format}")
 do
-	filename=$(basename $a_file_path)
+	filename=$( basename "${a_file_path}" )
+
 	if [[ "${export_format}" == "app" ]] ; then
-		app_zip_path="${output_dir}/${scheme}.${export_format}.zip"
-	fi
+		dirname=$( dirname "${a_file_path}" )
+		deploy_path="${output_dir}/${scheme}.app.zip"
 
-	mv "${a_file_path}" "${output_dir}"
+		echo_details "zipping file: ${a_file_path} to ${deploy_path}"
 
-	if [[ ! -z "${app_zip_path}" ]] ; then
-		echo_details "zipping file: ${a_file_path} to ${output_dir}"
-
-		cd ${output_dir}
-		zip_out=$(/usr/bin/zip -rTy "${app_zip_path}" "${scheme}.${export_format}")
+		# cd into app parent to not to store full
+		#  paths in the ZIP
+		cd "${dirname}"
+		zip_output=$(/usr/bin/zip -rTy "${deploy_path}" "${filename}")
 		cd -
+	else
+		deploy_path="${output_dir}/${scheme}.pkg"
+
+		mv "${a_file_path}" "${deploy_path}"
 	fi
 
-	regex=".*.${export_format}"
-	if [[ "${filename}" =~ $regex ]] ; then
-		if [[ -z "${exported_file_path}" ]] ; then
-			exported_file_path="${output_dir}/${filename}"
-		else
-			echo_warn "More APP file found"
-		fi
+	if [[ -z "${exported_file_path}" ]] ; then
+		exported_file_path="${deploy_path}"
+	else
+		echo_warn "More ${export_format} file found"
 	fi
 done
 unset IFS
@@ -367,10 +370,10 @@ if [ ! -e "${exported_file_path}" ] ; then
 fi
 
 #
-# Export *.app path
+# Export output file
 export BITRISE_EXPORTED_FILE_PATH="${exported_file_path}"
 envman add --key BITRISE_EXPORTED_FILE_PATH --value "${exported_file_path}"
-echo_done 'The APP path is now available in the Environment Variable: $BITRISE_EXPORTED_FILE_PATH'" (value: $BITRISE_EXPORTED_FILE_PATH)"
+echo_done "The ${export_format} path is now available in the Environment Variable: $BITRISE_EXPORTED_FILE_PATH (value: \"$BITRISE_EXPORTED_FILE_PATH\")"
 
 #
 # dSYM handling
