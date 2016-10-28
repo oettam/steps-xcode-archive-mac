@@ -1,6 +1,11 @@
-## Changelog (Current version: 1.3.1)
+## Changelog (Current version: 1.3.2)
 
 -----------------
+
+### 1.3.2 (2016 Oct 28)
+
+* [308b6f6] prepare for 1.3.2
+* [3e40841] app export log fix (#16)
 
 ### 1.3.1 (2016 Oct 04)
 
@@ -84,4 +89,4 @@
 
 -----------------
 
-Updated: 2016 Oct 04
+Updated: 2016 Oct 28
