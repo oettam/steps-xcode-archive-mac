@@ -373,7 +373,7 @@ fi
 # Export output file
 export BITRISE_EXPORTED_FILE_PATH="${exported_file_path}"
 envman add --key BITRISE_EXPORTED_FILE_PATH --value "${exported_file_path}"
-echo_done "The ${export_format} path is now available in the Environment Variable: $BITRISE_EXPORTED_FILE_PATH (value: \"$BITRISE_EXPORTED_FILE_PATH\")"
+echo_done 'The '"${export_format} path is now available in the Environment Variable: "'$BITRISE_EXPORTED_FILE_PATH'" (value: \"$BITRISE_EXPORTED_FILE_PATH\")"
 
 #
 # dSYM handling
