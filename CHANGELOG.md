@@ -1,6 +1,11 @@
-## Changelog (Current version: 1.3.2)
+## Changelog (Current version: 1.3.3)
 
 -----------------
+
+### 1.3.3 (2016 Dec 20)
+
+* [f5661f5] prepare for 1.3.3
+* [548598e] macos project type tag (#17)
 
 ### 1.3.2 (2016 Oct 28)
 
@@ -89,4 +94,4 @@
 
 -----------------
 
-Updated: 2016 Oct 28
+Updated: 2016 Dec 20
