@@ -1,8 +1,0 @@
-{
-	"dep_locks": [
-		{
-			"url": "https://github.com/bitrise-tools/xcodebuild-export-options-generator.git",
-			"revision": "99a25d6604c55a0c85d906084d903a50329ce838"
-		}
-	]
-}

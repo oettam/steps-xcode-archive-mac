@@ -19,8 +19,31 @@ is_skippable: false
 deps:
   check_only:
   - name: xcode
+  brew:
+  - name: go
+toolkit:
+  go:
+    package_name: github.com/bitrise-steplib/steps-xcode-archive-mac
 run_if: ""
 inputs:
+  - export_method: "development"
+    opts:
+      title: "Export method"
+      description: |-
+        The method for exporting the application.
+
+        - `app-store`: Sign and package application for distribution in the Mac App Store.
+        - `developer-id`: Save a copy of the application signed with your Developer ID.
+        - `development`: Save a copy of the application signed with your Development identity.
+        - `none`: Export a copy of the application without re-signing.
+
+        See `xcodebuild -help` for more information.
+      value_options:
+        - "app-store"
+        - "developer-id"
+        - "development"
+        - "none"
+      is_required: true
   - workdir: $BITRISE_SOURCE_DIR
     opts:
       title: "Working directory"
@@ -60,25 +83,23 @@ inputs:
       summary: ""
       description: |
         This directory will contain the generated .app or .pkg file's and .dSYM.zip files.
-  - is_force_code_sign: "no"
+  - artifact_name: ${scheme}
     opts:
-      title: "Use force code signing attributes?"
+      title: "Generated Artifact Name"
       description: |-
-        __DEPRECATED!__ 
-
-        Use `force_code_sign_identity` and `force_provisioning_profile` instead.
-        
-        If set to "yes" then it'll use the `PROVISIONING_PROFILE` (set
-        to the value of the `$BITRISE_PROVISIONING_PROFILE_ID` environment)
-        and `CODE_SIGN_IDENTITY` (set to the value
-        of the `$BITRISE_CODE_SIGN_IDENTITY` environment)
-        Xcode Command Line parameters,
-        for force the use of specified Certificate and Provisioning Profile,
-        to the ones
-      value_options:
-        - "yes"
-        - "no"
+        This name will be used as basename for the generated .xcarchive, .app or .pkg and .dSYM.zip files.
       is_required: true
+  - force_team_id:
+    opts:
+      title: "Force Developer Portal team to use during archive"
+      description: |-
+        Used for Xcode version 8 and above.
+
+        Force xcodebuild to use specified Developer Portal team during archive.
+
+        Format example:
+
+        - `1MZX23ABCD4`
   - force_code_sign_identity:
     opts:
       title: "Force code signing with Identity"
@@ -91,6 +112,23 @@ inputs:
         You also have to **specify the Identity in the format it's stored in Xcode project settings**,
         and **not how it's presented in the Xcode.app GUI**!
         **Capitalization also matters**, `Mac Distribution` works but `mac distribution` does not!
+  - force_provisioning_profile_specifier:
+    opts:
+      title: "Force code signing with Provisioning Profile Specifier"
+      description: |-
+        Used for Xcode version 8 and above.
+
+        Force xcodebuild to use specified Provisioning Profile.
+
+        How to get your Provisioning Profile Specifier:
+
+        - In Xcode make sure you disabled `Automatically manage signing` on your project's `General` tab
+        - Now you can select your Provisioning Profile Specifier's name as `Provisioning Profile` input value on your project's `General` tab
+        - `force_provisioning_profile_specifier` input value build up by the Team ID and the Provisioning Profile Specifier name, separated with slash character ('/'): `TEAM_ID/PROFILE_SPECIFIER_NAME`
+
+        Format example:
+
+        - `1MZX23ABCD4/My Provisioning Profile`
   - force_provisioning_profile:
     opts:
       title: "Force code signing with Provisioning Profile"
@@ -108,27 +146,6 @@ inputs:
         Format example:
 
         - c5be4123-1234-4f9d-9843-0d9be985a068
-  - export_options_path:
-    opts:
-      title: "Export options path"
-      description: |-
-        Specifies a path to a plist file that configures archive exporting.
-        If not specified, it will generate an export options plist with the method specified in `export_method`.
-        Call xcodebuild -help for available export options.
-  - export_method: "development"
-    opts:
-      title: "Export method"
-      description: |-
-        The method for exporting used in `exportOptions` plist.
-        `none` means no resigning during export.
-        Upload and install proper certificates when exporting with different identity than the one used for archive.
-        See `xcodebuild -help` for more information.
-      value_options:
-        - "app-store"
-        - "development"
-        - "developer-id"
-        - "none"
-      is_required: true
   - is_clean_build: "yes"
     opts:
       title: "Do a clean Xcode build before the archive?"
@@ -165,10 +182,63 @@ inputs:
       - "yes"
       - "no"
       is_required: true
+  - custom_export_options_plist_content:
+    opts:
+      title: "Custom export options plist content"
+      description: |-
+        Used for Xcode version 7 and above.
+
+        Specifies a custom export options plist content that configures archive exporting.
+        If empty, step generates these options based on provisioning profile,
+        with default values.
+
+        Auto generated export options available for export methods:
+
+        - app-store
+        - ad-hoc
+        - enterprise
+        - development
+
+        If step doesn't find export method based on provisioning profile, development will be use.
+
+        Call `xcodebuild -help` for available export options.
+  - export_options_path:
+    opts:
+      title: "[DEPRECATED] Export options path"
+      description: |-
+        __DEPRECATED!__
+
+        Use `custom_export_options_plist_content` instead.
+
+        Specifies a path to a plist file that configures archive exporting.
+        If not specified, it will generate an export options plist with the method specified in `export_method`.
+        Call xcodebuild -help for available export options.
+  - is_force_code_sign: "no"
+    opts:
+      title: "[DEPRECATED] Use force code signing attributes?"
+      description: |-
+        __DEPRECATED!__ 
+
+        Use `force_code_sign_identity` and `force_provisioning_profile_specifier/force_provisioning_profile` instead.
+        
+        If set to "yes" then it'll use the `PROVISIONING_PROFILE` (set
+        to the value of the `$BITRISE_PROVISIONING_PROFILE_ID` environment)
+        and `CODE_SIGN_IDENTITY` (set to the value
+        of the `$BITRISE_CODE_SIGN_IDENTITY` environment)
+        Xcode Command Line parameters,
+        for force the use of specified Certificate and Provisioning Profile,
+        to the ones
+      value_options:
+        - "yes"
+        - "no"
+      is_required: true
 outputs:
   - BITRISE_EXPORTED_FILE_PATH:
     opts:
-      title: The created .app or .pkg file's path
+      title: The created .app.zip or .pkg file's path
+  - BITRISE_APP_PATH:
+    opts:
+      title: The created .app path
   - BITRISE_DSYM_PATH:
     opts:
       title: The created .dSYM.zip file's path
