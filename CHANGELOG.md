@@ -1,6 +1,11 @@
-## Changelog (Current version: 1.3.3)
+## Changelog (Current version: 1.4.0)
 
 -----------------
+
+### 1.4.0 (2017 Mar 06)
+
+* [e2b907d] prepare for 1.4.0
+* [e9f2f4b] Artifact name (#19)
 
 ### 1.3.3 (2016 Dec 20)
 
@@ -94,4 +99,4 @@
 
 -----------------
 
-Updated: 2016 Dec 20
+Updated: 2017 Mar 06
