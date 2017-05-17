@@ -1,6 +1,11 @@
-## Changelog (Current version: 1.4.0)
+## Changelog (Current version: 1.4.1)
 
 -----------------
+
+### 1.4.1 (2017 May 17)
+
+* [e63b47c] prepare for 1.4.1
+* [b0ae6f5] Step update (#20)
 
 ### 1.4.0 (2017 Mar 06)
 
@@ -99,4 +104,4 @@
 
 -----------------
 
-Updated: 2017 Mar 06
+Updated: 2017 May 17
