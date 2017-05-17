@@ -12,7 +12,6 @@ project_type_tags:
   - macos
 type_tags:
   - build
-  - xcode
 is_requires_admin_user: false
 is_always_run: false
 is_skippable: false
@@ -44,51 +43,7 @@ inputs:
         - "development"
         - "none"
       is_required: true
-  - workdir: $BITRISE_SOURCE_DIR
-    opts:
-      title: "Working directory"
-      summary: ""
-      description: |
-        Working directory of the step.
-        You can leave it empty to don't change it.
-  - project_path: $BITRISE_PROJECT_PATH
-    opts:
-      title: "Project (or Workspace) path"
-      summary: ""
-      description: |
-        A `.xcodeproj` or `.xcworkspace` path.
-      is_required: true
-  - scheme: $BITRISE_SCHEME
-    opts:
-      title: "Scheme name"
-      summary: ""
-      description: |
-        The Scheme to use.
-      is_required: true
-  - configuration:
-    opts:
-      title: "Configuration name"
-      summary: ""
-      description: |
-        (optional) The configuration to use. By default your Scheme
-        defines which configuration (Debug, Release, ...) should be used,
-        but you can overwrite it with this option.
-        **Make sure that the Configuration you specify actually exists
-        in your Xcode Project**. If it does not, if you have a typo
-        in the value of this input Xcode will simply use the Configuration
-        specified by the Scheme and will silently ignore this parameter!
-  - output_dir: $BITRISE_DEPLOY_DIR
-    opts:
-      title: "Output directory path"
-      summary: ""
-      description: |
-        This directory will contain the generated .app or .pkg file's and .dSYM.zip files.
-  - artifact_name: ${scheme}
-    opts:
-      title: "Generated Artifact Name"
-      description: |-
-        This name will be used as basename for the generated .xcarchive, .app or .pkg and .dSYM.zip files.
-      is_required: true
+      category: "app/pkg export configs"
   - force_team_id:
     opts:
       title: "Force Developer Portal team to use during archive"
@@ -100,18 +55,7 @@ inputs:
         Format example:
 
         - `1MZX23ABCD4`
-  - force_code_sign_identity:
-    opts:
-      title: "Force code signing with Identity"
-      description: |-
-        Force xcodebuild to use specified Code Sign Identity.
-
-        Specify code sign identity as full ID (e.g. `Mac Developer: Bitrise Bot (VV2J4SV8V4)`)
-        or specify code sign group ( `Mac Developer` or `Mac Distribution` ).
-
-        You also have to **specify the Identity in the format it's stored in Xcode project settings**,
-        and **not how it's presented in the Xcode.app GUI**!
-        **Capitalization also matters**, `Mac Distribution` works but `mac distribution` does not!
+      category: "app/pkg export configs"
   - force_provisioning_profile_specifier:
     opts:
       title: "Force code signing with Provisioning Profile Specifier"
@@ -129,6 +73,7 @@ inputs:
         Format example:
 
         - `1MZX23ABCD4/My Provisioning Profile`
+      category: "app/pkg export configs"
   - force_provisioning_profile:
     opts:
       title: "Force code signing with Provisioning Profile"
@@ -146,42 +91,20 @@ inputs:
         Format example:
 
         - c5be4123-1234-4f9d-9843-0d9be985a068
-  - is_clean_build: "yes"
+      category: "app/pkg export configs"
+  - force_code_sign_identity:
     opts:
-      title: "Do a clean Xcode build before the archive?"
-      value_options:
-        - "yes"
-        - "no"
-      is_required: true
-  - output_tool: xcpretty
-    opts:
-      title: Output tool
+      title: "Force code signing with Identity"
       description: |-
-        If output_tool is set to xcpretty, the xcodebuild output will be prettified by xcpretty.
-        If output_tool is set to xcodebuild, the raw xcodebuild output will be printed.
-      value_options:
-      - xcpretty
-      - xcodebuild
-      is_required: true
-  - is_export_xcarchive_zip: "no"
-    opts:
-      title: Export the generated archive?
-      description: |
-        If this input is set to `yes`, the generated .xcarchive will be zipped and moved to `output_dir`.
-      value_options:
-      - "yes"
-      - "no"
-      is_required: true
-  - is_export_all_dsyms: "no"
-    opts:
-      title: Export all dsyms?
-      description: |-
-        If this input is set to `yes` step will collect every dsym (.app dsym and framwork dsyms) in a directory, zip it and export the zipped directory path.
-        Otherwise only .app dsym will be zipped and the zip path exported.
-      value_options:
-      - "yes"
-      - "no"
-      is_required: true
+        Force xcodebuild to use specified Code Sign Identity.
+
+        Specify code sign identity as full ID (e.g. `Mac Developer: Bitrise Bot (VV2J4SV8V4)`)
+        or specify code sign group ( `Mac Developer` or `Mac Distribution` ).
+
+        You also have to **specify the Identity in the format it's stored in Xcode project settings**,
+        and **not how it's presented in the Xcode.app GUI**!
+        **Capitalization also matters**, `Mac Distribution` works but `mac distribution` does not!
+      category: "app/pkg export configs"
   - custom_export_options_plist_content:
     opts:
       title: "Custom export options plist content"
@@ -202,17 +125,98 @@ inputs:
         If step doesn't find export method based on provisioning profile, development will be use.
 
         Call `xcodebuild -help` for available export options.
-  - export_options_path:
+      category: "app/pkg export configs"
+  - workdir: $BITRISE_SOURCE_DIR
     opts:
-      title: "[DEPRECATED] Export options path"
+      title: "Working directory"
+      summary: ""
+      description: |
+        Working directory of the step.
+        You can leave it empty to don't change it.
+      category: "xcodebuild configs"
+  - project_path: $BITRISE_PROJECT_PATH
+    opts:
+      title: "Project (or Workspace) path"
+      summary: ""
+      description: |
+        A `.xcodeproj` or `.xcworkspace` path.
+      is_required: true
+      category: "xcodebuild configs"
+  - scheme: $BITRISE_SCHEME
+    opts:
+      title: "Scheme name"
+      summary: ""
+      description: |
+        The Scheme to use.
+      is_required: true
+      category: "xcodebuild configs"
+  - configuration:
+    opts:
+      title: "Configuration name"
+      summary: ""
+      description: |
+        (optional) The configuration to use. By default your Scheme
+        defines which configuration (Debug, Release, ...) should be used,
+        but you can overwrite it with this option.
+        **Make sure that the Configuration you specify actually exists
+        in your Xcode Project**. If it does not, if you have a typo
+        in the value of this input Xcode will simply use the Configuration
+        specified by the Scheme and will silently ignore this parameter!
+      category: "xcodebuild configs"
+  - is_clean_build: "yes"
+    opts:
+      title: "Do a clean Xcode build before the archive?"
+      value_options:
+        - "yes"
+        - "no"
+      is_required: true
+      category: "xcodebuild configs"
+  - output_tool: xcpretty
+    opts:
+      title: Output tool
       description: |-
-        __DEPRECATED!__
-
-        Use `custom_export_options_plist_content` instead.
-
-        Specifies a path to a plist file that configures archive exporting.
-        If not specified, it will generate an export options plist with the method specified in `export_method`.
-        Call xcodebuild -help for available export options.
+        If output_tool is set to xcpretty, the xcodebuild output will be prettified by xcpretty.
+        If output_tool is set to xcodebuild, the raw xcodebuild output will be printed.
+      value_options:
+      - xcpretty
+      - xcodebuild
+      is_required: true
+      category: "step output configs"
+  - output_dir: $BITRISE_DEPLOY_DIR
+    opts:
+      title: "Output directory path"
+      summary: ""
+      description: |
+        This directory will contain the generated .app or .pkg file's and .dSYM.zip files.
+      category: "step output configs"
+  - artifact_name: ${scheme}
+    opts:
+      title: "Generated Artifact Name"
+      description: |-
+        This name will be used as basename for the generated .xcarchive, .app or .pkg and .dSYM.zip files.
+      is_required: true
+      category: "step output configs"
+  - is_export_xcarchive_zip: "no"
+    opts:
+      title: Export the generated archive?
+      description: |
+        If this input is set to `yes`, the generated .xcarchive will be zipped and moved to `output_dir`.
+      value_options:
+      - "yes"
+      - "no"
+      is_required: true
+      category: "step output configs"
+  - is_export_all_dsyms: "no"
+    opts:
+      title: Export all dsyms?
+      description: |-
+        If this input is set to `yes` step will collect every dsym (.app dsym and framwork dsyms) in a directory, zip it and export the zipped directory path.
+        Otherwise only .app dsym will be zipped and the zip path exported.
+      value_options:
+      - "yes"
+      - "no"
+      is_required: true
+      category: "step output configs"
   - is_force_code_sign: "no"
     opts:
       title: "[DEPRECATED] Use force code signing attributes?"
@@ -232,6 +236,19 @@ inputs:
         - "yes"
         - "no"
       is_required: true
+      category: "DEPRECATED configs"
+  - export_options_path:
+    opts:
+      title: "[DEPRECATED] Export options path"
+      description: |-
+        __DEPRECATED!__
+
+        Use `custom_export_options_plist_content` instead.
+
+        Specifies a path to a plist file that configures archive exporting.
+        If not specified, it will generate an export options plist with the method specified in `export_method`.
+        Call xcodebuild -help for available export options.
+      category: "DEPRECATED configs"
 outputs:
   - BITRISE_EXPORTED_FILE_PATH:
     opts:
