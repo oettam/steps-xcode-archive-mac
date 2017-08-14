@@ -1,6 +1,11 @@
-## Changelog (Current version: 1.4.1)
+## Changelog (Current version: 1.5.0)
 
 -----------------
+
+### 1.5.0 (2017 Aug 14)
+
+* [aac7a6e] prepare for 1.5.0
+* [73e2756] export generated .xcarchive dir path, godeps-update (#21)
 
 ### 1.4.1 (2017 May 17)
 
@@ -104,4 +109,4 @@
 
 -----------------
 
-Updated: 2017 May 17
+Updated: 2017 Aug 14
