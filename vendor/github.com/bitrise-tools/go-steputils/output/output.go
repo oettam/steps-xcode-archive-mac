@@ -7,6 +7,7 @@ import (
 	"github.com/bitrise-io/go-utils/command"
 	"github.com/bitrise-io/go-utils/fileutil"
 	"github.com/bitrise-io/go-utils/pathutil"
+	"github.com/bitrise-io/go-utils/ziputil"
 	"github.com/bitrise-tools/go-steputils/tools"
 )
 
@@ -59,19 +60,6 @@ func ExportOutputFileContent(content, destinationPth, envKey string) error {
 	return ExportOutputFile(destinationPth, destinationPth, envKey)
 }
 
-// Zip ...
-func Zip(sourcePth, destinationZipPth string) error {
-	parentDir := filepath.Dir(sourcePth)
-	dirName := filepath.Base(sourcePth)
-	cmd := command.New("/usr/bin/zip", "-rTy", destinationZipPth, dirName)
-	cmd.SetDir(parentDir)
-	out, err := cmd.RunAndReturnTrimmedCombinedOutput()
-	if err != nil {
-		return fmt.Errorf("Failed to zip: %s, output: %s, error: %s", sourcePth, out, err)
-	}
-	return nil
-}
-
 // ZipAndExportOutput ...
 func ZipAndExportOutput(sourcePth, destinationZipPth, envKey string) error {
 	tmpDir, err := pathutil.NormalizedOSTempDirPath("__export_tmp_dir__")
@@ -82,8 +70,20 @@ func ZipAndExportOutput(sourcePth, destinationZipPth, envKey string) error {
 	base := filepath.Base(sourcePth)
 	tmpZipFilePth := filepath.Join(tmpDir, base+".zip")
 
-	if err := Zip(sourcePth, tmpZipFilePth); err != nil {
+	if exist, err := pathutil.IsDirExists(sourcePth); err != nil {
 		return err
+	} else if exist {
+		if err := ziputil.ZipDir(sourcePth, tmpZipFilePth, false); err != nil {
+			return err
+		}
+	} else if exist, err := pathutil.IsPathExists(sourcePth); err != nil {
+		return err
+	} else if exist {
+		if err := ziputil.ZipFile(sourcePth, tmpZipFilePth); err != nil {
+			return err
+		}
+	} else {
+		return fmt.Errorf("source path (%s) not exists", sourcePth)
 	}
 
 	return ExportOutputFile(tmpZipFilePth, destinationZipPth, envKey)
