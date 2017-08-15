@@ -262,6 +262,6 @@ outputs:
   - BITRISE_XCARCHIVE_PATH:
     opts:
       title: The created .xcarchive.zip file's path
-  - BITRISE_XCARCHIVE_DIR_PATH:
+  - BITRISE_MACOS_XCARCHIVE_PATH:
     opts:
       title: The created .xcarchive dir's path

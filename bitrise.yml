@@ -80,7 +80,7 @@ workflows:
             echo "-> BITRISE_DSYM_PATH: ${BITRISE_DSYM_PATH}"
             echo "-> BITRISE_APP_PATH: ${BITRISE_APP_PATH}"
             echo "-> BITRISE_XCARCHIVE_PATH: ${BITRISE_XCARCHIVE_PATH}"
-            echo "-> BITRISE_XCARCHIVE_DIR_PATH: ${BITRISE_XCARCHIVE_DIR_PATH}"
+            echo "-> BITRISE_MACOS_XCARCHIVE_PATH: ${BITRISE_MACOS_XCARCHIVE_PATH}"
 
   go-tests:
     before_run:

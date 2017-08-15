@@ -27,7 +27,7 @@ const (
 	bitriseExportedFilePath             = "BITRISE_EXPORTED_FILE_PATH"
 	bitriseDSYMDirPthEnvKey             = "BITRISE_DSYM_PATH"
 	bitriseXCArchivePthEnvKey           = "BITRISE_XCARCHIVE_PATH"
-	bitriseXCArchiveDirPthEnvKey        = "BITRISE_XCARCHIVE_DIR_PATH"
+	bitriseXCArchiveDirPthEnvKey        = "BITRISE_MACOS_XCARCHIVE_PATH"
 	bitriseAppPthEnvKey                 = "BITRISE_APP_PATH"
 	bitriseIDEDistributionLogsPthEnvKey = "BITRISE_IDEDISTRIBUTION_LOGS_PATH"
 )
