@@ -1,6 +1,13 @@
-## Changelog (Current version: 1.6.0)
+## Changelog (Current version: 1.5.1)
 
 -----------------
+
+### 1.5.1 (2017 Aug 15)
+
+* [b17d881] prepare for 1.5.1
+* [ac5a723] v1.6.0
+* [6d4dc92] prepare for 1.6.0
+* [c1260af] BITRISE_XCARCHIVE_DIR_PATH -> BITRISE_MACOS_XCARCHIVE_PATH (#22)
 
 ### 1.6.0 (2017 Aug 15)
 
