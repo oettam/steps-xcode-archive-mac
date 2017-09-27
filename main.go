@@ -499,24 +499,33 @@ is available in the $BITRISE_XCODE_RAW_RESULT_TEXT_PATH environment variable (va
 		exportCmd.SetArchivePath(archivePath)
 		exportCmd.SetExportDir(exportTmpDir)
 
-		exportMethod, err := exportoptions.ParseMethod(configs.ExportMethod)
-		if err != nil {
-			failf("Failed to parse export method, error: %s", err)
-		}
+		if configs.CustomExportOptionsPlistContent != "" {
+			log.Printf("Custom export options content provided:")
+			fmt.Println(configs.CustomExportOptionsPlistContent)
 
-		var exportOpts exportoptions.ExportOptions
-		if exportMethod == exportoptions.MethodAppStore {
-			exportOpts = exportoptions.NewAppStoreOptions()
+			if err := fileutil.WriteStringToFile(exportOptionsPath, configs.CustomExportOptionsPlistContent); err != nil {
+				failf("Failed to write export options to file, error: %s", err)
+			}
 		} else {
-			exportOpts = exportoptions.NewNonAppStoreOptions(exportMethod)
-		}
+			exportMethod, err := exportoptions.ParseMethod(configs.ExportMethod)
+			if err != nil {
+				failf("Failed to parse export method, error: %s", err)
+			}
 
-		log.Printf("generated export options content:")
-		fmt.Println()
-		fmt.Println(exportOpts.String())
+			var exportOpts exportoptions.ExportOptions
+			if exportMethod == exportoptions.MethodAppStore {
+				exportOpts = exportoptions.NewAppStoreOptions()
+			} else {
+				exportOpts = exportoptions.NewNonAppStoreOptions(exportMethod)
+			}
 
-		if err = exportOpts.WriteToFile(exportOptionsPath); err != nil {
-			failf("Failed to write export options to file, error: %s", err)
+			log.Printf("generated export options content:")
+			fmt.Println()
+			fmt.Println(exportOpts.String())
+
+			if err = exportOpts.WriteToFile(exportOptionsPath); err != nil {
+				failf("Failed to write export options to file, error: %s", err)
+			}
 		}
 
 		exportCmd.SetExportOptionsPlist(exportOptionsPath)
