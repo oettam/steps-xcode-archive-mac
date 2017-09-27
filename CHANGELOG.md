@@ -1,6 +1,12 @@
-## Changelog (Current version: 1.5.1)
+## Changelog (Current version: 1.5.2)
 
 -----------------
+
+### 1.5.2 (2017 Sep 27)
+
+* [107bd9d] Prepare for 1.5.2
+* [81d65a1] Use CustomExportOptionsPlistContent (#23)
+* [f8176f5] v 1.5.1
 
 ### 1.5.1 (2017 Aug 15)
 
@@ -116,4 +122,4 @@
 
 -----------------
 
-Updated: 2017 Aug 15
+Updated: 2017 Sep 27
