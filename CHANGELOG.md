@@ -1,6 +1,11 @@
-## Changelog (Current version: 1.5.2)
+## Changelog (Current version: 1.6.0)
 
 -----------------
+
+### 1.6.0 (2017 Nov 23)
+
+* [ffb13a4] Prepare for 1.6.0
+* [a76713d] xcode 9 review (#24)
 
 ### 1.5.2 (2017 Sep 27)
 
@@ -122,4 +127,4 @@
 
 -----------------
 
-Updated: 2017 Sep 27
+Updated: 2017 Nov 23
