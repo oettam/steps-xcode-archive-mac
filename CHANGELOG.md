@@ -1,6 +1,11 @@
-## Changelog (Current version: 1.6.0)
+## Changelog (Current version: 1.6.1)
 
 -----------------
+
+### 1.6.1 (2017 Dec 08)
+
+* [7a61b63] Bump version to 1.6.1
+* [cdeef39] Print last lines of the raw xcodebuild log (#26)
 
 ### 1.6.0 (2017 Nov 23)
 
@@ -127,4 +132,4 @@
 
 -----------------
 
-Updated: 2017 Nov 23
+Updated: 2017 Dec 08
