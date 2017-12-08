@@ -4,20 +4,20 @@
 [[projects]]
   branch = "master"
   name = "github.com/bitrise-io/go-utils"
-  packages = ["colorstring","command","errorutil","fileutil","log","pathutil","pkcs12","pkcs12/internal/rc2","ziputil"]
-  revision = "e25bd13153e87e91289343f55b3ee8d3228fb7ac"
+  packages = ["colorstring","command","errorutil","fileutil","log","pathutil","pkcs12","pkcs12/internal/rc2","stringutil","ziputil"]
+  revision = "f1da7139131b85ab2a4bd4ffacbdc889a40018a1"
 
 [[projects]]
   branch = "master"
   name = "github.com/bitrise-tools/go-steputils"
   packages = ["input","output","tools"]
-  revision = "a848c9870ff7d745a8fb2a951e1c81fcb147b4ec"
+  revision = "fde82e0ff3c0643076950c8642142207845eaa39"
 
 [[projects]]
   branch = "master"
   name = "github.com/bitrise-tools/go-xcode"
   packages = ["certificateutil","export","exportoptions","models","plistutil","profileutil","utility","xcarchive","xcodebuild","xcpretty"]
-  revision = "f98c7cfab5c75138176b4352532cd7252d118ae2"
+  revision = "c23fa74e7b04374fbff484fd12ba87cf64cd89e1"
 
 [[projects]]
   branch = "master"
@@ -46,6 +46,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "c5cbce89ef2877740217aae5411f19fe530eb7287992bb0e7a9e04d6d5fea6ac"
+  inputs-digest = "a53c18c194f4ff2741890f605a8fe89359771406cd7b77fa7955133c66dc789c"
   solver-name = "gps-cdcl"
   solver-version = 1

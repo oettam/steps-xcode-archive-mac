@@ -16,6 +16,7 @@ import (
 	"github.com/bitrise-io/go-utils/fileutil"
 	"github.com/bitrise-io/go-utils/log"
 	"github.com/bitrise-io/go-utils/pathutil"
+	"github.com/bitrise-io/go-utils/stringutil"
 	"github.com/bitrise-tools/go-steputils/input"
 	"github.com/bitrise-tools/go-steputils/output"
 	"github.com/bitrise-tools/go-steputils/tools"
@@ -380,12 +381,16 @@ func main() {
 		fmt.Println()
 
 		if rawXcodebuildOut, err := xcprettyCmd.Run(); err != nil {
+
+			log.Errorf("\nLast lines of the Xcode's build log:")
+			fmt.Println(stringutil.LastNLines(rawXcodebuildOut, 10))
+
 			if err := output.ExportOutputFileContent(rawXcodebuildOut, rawXcodebuildOutputLogPath, bitriseXcodeRawResultTextEnvKey); err != nil {
 				log.Warnf("Failed to export %s, error: %s", bitriseXcodeRawResultTextEnvKey, err)
 			} else {
-				log.Warnf(`If you can't find the reason of the error in the log, please check the raw-xcodebuild-output.log
-The log file is stored in $BITRISE_DEPLOY_DIR, and its full path
-is available in the $BITRISE_XCODE_RAW_RESULT_TEXT_PATH environment variable (value: %s)`, rawXcodebuildOutputLogPath)
+				log.Warnf(`You can find the last couple of lines of Xcode's build log above, but the full log is also available in the raw-xcodebuild-output.log
+The log file is stored in $BITRISE_DEPLOY_DIR, and its full path is available in the $BITRISE_XCODE_RAW_RESULT_TEXT_PATH environment variable
+(value: %s)`, rawXcodebuildOutputLogPath)
 			}
 
 			failf("Archive failed, error: %s", err)
