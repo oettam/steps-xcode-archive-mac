@@ -4,20 +4,46 @@
 [[projects]]
   branch = "master"
   name = "github.com/bitrise-io/go-utils"
-  packages = ["colorstring","command","errorutil","fileutil","log","pathutil","pkcs12","pkcs12/internal/rc2","stringutil","ziputil"]
-  revision = "f1da7139131b85ab2a4bd4ffacbdc889a40018a1"
+  packages = [
+    "colorstring",
+    "command",
+    "errorutil",
+    "fileutil",
+    "log",
+    "pathutil",
+    "pkcs12",
+    "pkcs12/internal/rc2",
+    "stringutil",
+    "ziputil"
+  ]
+  revision = "b33f6bcef9b50045d7e62364b354584afc3ee329"
 
 [[projects]]
   branch = "master"
   name = "github.com/bitrise-tools/go-steputils"
-  packages = ["input","output","tools"]
+  packages = [
+    "input",
+    "output",
+    "tools"
+  ]
   revision = "fde82e0ff3c0643076950c8642142207845eaa39"
 
 [[projects]]
   branch = "master"
   name = "github.com/bitrise-tools/go-xcode"
-  packages = ["certificateutil","export","exportoptions","models","plistutil","profileutil","utility","xcarchive","xcodebuild","xcpretty"]
-  revision = "c23fa74e7b04374fbff484fd12ba87cf64cd89e1"
+  packages = [
+    "certificateutil",
+    "export",
+    "exportoptions",
+    "models",
+    "plistutil",
+    "profileutil",
+    "utility",
+    "xcarchive",
+    "xcodebuild",
+    "xcpretty"
+  ]
+  revision = "d5a6b4f8a72e13fa03f1a55ffda39a395e2253d5"
 
 [[projects]]
   branch = "master"
