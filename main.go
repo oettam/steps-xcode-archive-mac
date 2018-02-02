@@ -706,36 +706,4 @@ is available in the $BITRISE_IDEDISTRIBUTION_LOGS_PATH environment variable (val
 		}
 	}
 
-	// Export .dSYM files
-	fmt.Println()
-	log.Infof("Exporting dSYM files ...")
-	fmt.Println()
-
-	appDSYM, frameworkDSYMs, err := archive.FindDSYMs()
-	if err != nil {
-		failf("Failed to export dsyms, error: %s", err)
-	}
-
-	dsymDir, err := pathutil.NormalizedOSTempDirPath("__dsyms__")
-	if err != nil {
-		failf("Failed to create tmp dir, error: %s", err)
-	}
-
-	if err := command.CopyDir(appDSYM, dsymDir, false); err != nil {
-		failf("Failed to copy (%s) -> (%s), error: %s", appDSYM, dsymDir, err)
-	}
-
-	if configs.IsExportAllDsyms == "yes" {
-		for _, dsym := range frameworkDSYMs {
-			if err := command.CopyDir(dsym, dsymDir, false); err != nil {
-				failf("Failed to copy (%s) -> (%s), error: %s", dsym, dsymDir, err)
-			}
-		}
-	}
-
-	if err := output.ZipAndExportOutput(dsymDir, dsymZipPath, bitriseDSYMDirPthEnvKey); err != nil {
-		failf("Failed to export %s, error: %s", bitriseDSYMDirPthEnvKey, err)
-	}
-
-	log.Donef("The dSYM dir path is now available in the Environment Variable: %s (value: %s)", bitriseDSYMDirPthEnvKey, dsymZipPath)
 }
